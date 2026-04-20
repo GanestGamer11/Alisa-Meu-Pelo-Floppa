@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alisa meu pelo - Floppa</title>
+  <style>
+    :root {
+      --bg: #111217;
+      --panel: #1a1d26;
+      --text: #f4f4f5;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --ok: #22c55e;
+      --debug-pet: rgba(34, 197, 94, 0.18);
+      --debug-pet-border: rgba(34, 197, 94, 0.85);
+      --debug-danger: rgba(239, 68, 68, 0.18);
+      --debug-danger-border: rgba(239, 68, 68, 0.9);
+      --debug-hand: rgba(59, 130, 246, 0.18);
+      --debug-hand-border: rgba(59, 130, 246, 0.9);
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      cursor: none;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, #1f2937, var(--bg));
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    #game {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #hud {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 35;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 12px 14px;
+      backdrop-filter: blur(8px);
+      min-width: 220px;
+    }
+
+    #hud h1 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .hud-line {
+      font-size: 14px;
+      margin: 4px 0;
+    }
+
+    .value {
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .dev-only {
+      display: none;
+    }
+
+    body.dev-on .dev-only {
+      display: block;
+    }
+
+    #controls {
+      position: absolute;
+      right: 16px;
+      top: 16px;
+      z-index: 40;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 12px 14px;
+      backdrop-filter: blur(8px);
+      width: 320px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
+      display: none;
+    }
+
+    body.dev-on #controls {
+      display: block;
+    }
+
+    #controls h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    #controls details {
+      margin-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 8px;
+    }
+
+    #controls label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      margin: 6px 0;
+    }
+
+    #controls input[type="range"],
+    #controls input[type="number"] {
+      width: 120px;
+    }
+
+    #arena {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    #floppaWrap {
+      position: relative;
+      width: min(88vw, 900px);
+      aspect-ratio: 580 / 431;
+    }
+
+    #floppa {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      image-rendering: auto;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .debug-box {
+      position: absolute;
+      z-index: 6;
+      pointer-events: none;
+      display: none;
+    }
+
+    body.debug-on .debug-box {
+      display: block;
+    }
+
+    #petZoneDebug {
+      background: var(--debug-pet);
+      border: 2px solid var(--debug-pet-border);
+    }
+
+    #dangerZoneDebug {
+      background: var(--debug-danger);
+      border: 2px solid var(--debug-danger-border);
+    }
+
+    #hand {
+      position: fixed;
+      width: 180px;
+      height: 180px;
+      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      transform-origin: center center;
+      pointer-events: none;
+      z-index: 20;
+      object-fit: contain;
+      transition: transform 0.06s ease;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,0.22));
+    }
+
+    #hand.pressing {
+      transform: translate(-50%, -50%) scale(0.84, 0.78) rotate(-7deg);
+    }
+
+    #handDebug {
+      position: fixed;
+      z-index: 21;
+      pointer-events: none;
+      display: none;
+      background: var(--debug-hand);
+      border: 2px solid var(--debug-hand-border);
+      transform: translate(-50%, -50%);
+    }
+
+    body.debug-on #handDebug {
+      display: block;
+    }
+
+    #flash {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    .dangerPulse {
+      animation: flashDanger 0.18s linear;
+    }
+
+    @keyframes flashDanger {
+      0% { background: rgba(255,255,255,0.05); }
+      50% { background: rgba(255,0,0,0.18); }
+      100% { background: rgba(255,255,255,0); }
+    }
+
+    #helpBtn {
+      position: absolute;
+        left: 1em;
+        top: 6.5em;
+      z-index: 36;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+    }
+
+    #credit {
+      position: absolute;
+      left: 16px;
+      bottom: 14px;
+      z-index: 36;
+      font-size: 13px;
+      color: rgba(255,255,255,0.76);
+      background: rgba(0,0,0,0.28);
+      padding: 8px 10px;
+      border-radius: 10px;
+      backdrop-filter: blur(6px);
+    }
+
+    #credit a {
+      color: #fbbf24;
+      text-decoration: none;
+    }
+
+    #credit a:hover {
+      text-decoration: underline;
+    }
+
+    #helpModal {
+      position: absolute;
+      inset: 0;
+      z-index: 70;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.58);
+      backdrop-filter: blur(6px);
+      padding: 20px;
+    }
+
+    #helpModal.show {
+      display: flex;
+    }
+
+    .help-card {
+      position: relative;
+      width: min(92vw, 560px);
+      background: rgba(17,18,23,0.96);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 24px 24px 20px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.45);
+    }
+
+    .help-card h2 {
+      margin: 0 0 12px;
+      font-size: 28px;
+    }
+
+    .help-card p {
+      margin: 0;
+      color: #e4e4e7;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    #closeHelpBtn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    #gameOver {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      background:
+        radial-gradient(circle at center, rgba(90, 0, 0, 0.16), rgba(0,0,0,0.86) 48%, rgba(0,0,0,0.95)),
+        linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0.9));
+      backdrop-filter: blur(6px);
+    }
+
+    #gameOver.show {
+      display: flex;
+    }
+
+    .gameover-card {
+      text-align: center;
+      background: transparent;
+      border: 0;
+      border-radius: 20px;
+      padding: 24px;
+      width: min(92vw, 700px);
+      box-shadow: none;
+    }
+
+    .gameover-card h2 {
+      margin-top: 0;
+      font-size: clamp(42px, 9vw, 86px);
+      color: #b91c1c;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow:
+        0 0 12px rgba(127, 29, 29, 0.9),
+        0 0 36px rgba(0, 0, 0, 0.95),
+        0 6px 18px rgba(0, 0, 0, 0.95);
+      white-space: nowrap;
+    }
+
+    .gameover-card p {
+      color: #e4e4e7;
+      margin-bottom: 16px;
+      font-size: 20px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.95);
+    }
+
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      background: var(--accent);
+      color: #111;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      filter: brightness(1.05);
+    }
+
+    #jumpscare {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(45vw, 520px);
+      transform: translate(-50%, -50%) scale(0.1);
+      opacity: 0;
+      z-index: 45;
+      pointer-events: none;
+      display: none;
+    }
+
+    #jumpscare.show {
+      display: block;
+      animation: jumpscareZoom 0.65s cubic-bezier(.12,.82,.18,1) forwards;
+    }
+
+    @keyframes jumpscareZoom {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.1);
+      }
+      18% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(2.4);
+      }
+    }
+
+    .hint {
+      color: #a1a1aa;
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 6px;
+    }
+
+    .danger-text {
+      color: #fca5a5;
+    }
+
+    @media (max-width: 900px) {
+      #controls {
+        width: 280px;
+      }
+      #hand {
+        width: 140px;
+        height: 140px;
+      }
+      #helpBtn {
+        top: 116px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="game">
+    <div id="hud">
+      <h1>Alisa meu pelo - Floppa</h1>
+      <div class="hud-line">Pontos: <span id="score" class="value">0.0</span></div>
+      <div class="hud-line">Estado: <span id="stateText" class="value">Calmo</span></div>
+      <div class="hud-line dev-only">Raiva: <span id="angerText" class="value">0%</span></div>
+    </div>
+
+    <button id="helpBtn" type="button">?</button>
+
+    <div id="controls">
+      <h2>Ajustes</h2>
+      <label>
+        Mostrar colisões
+        <input type="checkbox" id="toggleDebug" />
+      </label>
+      <label>
+        Escala da mão
+        <input type="range" id="handScale" min="80" max="320" step="1" value="180" />
+      </label>
+      <label>
+        Cooldown do carinho (ms)
+        <input type="number" id="petCooldown" min="10" max="500" step="5" value="60" />
+      </label>
+      <label>
+        Movimento mínimo p/ alisar
+        <input type="number" id="minSpeed" min="0.1" max="60" step="0.1" value="3.2" />
+      </label>
+      <label>
+        Carga calma até alerta
+        <input type="number" id="calmThreshold" min="1" max="100" step="0.5" value="12" />
+      </label>
+      <label>
+        Raiva para morrer
+        <input type="number" id="dangerThreshold" min="1" max="100" step="0.5" value="22" />
+      </label>
+      <label>
+        Queda de raiva
+        <input type="number" id="angerDecay" min="0" max="5" step="0.05" value="0.03" />
+      </label>
+
+      <details open>
+        <summary>Área de carinho (corpo)</summary>
+        <label>X (%) <input type="number" id="petX" min="0" max="100" step="0.5" value="34" /></label>
+        <label>Y (%) <input type="number" id="petY" min="0" max="100" step="0.5" value="31" /></label>
+        <label>Largura (%) <input type="number" id="petW" min="1" max="100" step="0.5" value="50" /></label>
+        <label>Altura (%) <input type="number" id="petH" min="1" max="100" step="0.5" value="50" /></label>
+      </details>
+
+      <details>
+        <summary>Área da cabeça / risco</summary>
+        <label>X (%) <input type="number" id="dangerX" min="0" max="100" step="0.5" value="27" /></label>
+        <label>Y (%) <input type="number" id="dangerY" min="0" max="100" step="0.5" value="25" /></label>
+        <label>Largura (%) <input type="number" id="dangerW" min="1" max="100" step="0.5" value="28" /></label>
+        <label>Altura (%) <input type="number" id="dangerH" min="1" max="100" step="0.5" value="32" /></label>
+      </details>
+
+      <details>
+        <summary>Área ativa da mão</summary>
+        <label>X offset (%) <input type="number" id="handHitX" min="0" max="100" step="0.5" value="19.5" /></label>
+        <label>Y offset (%) <input type="number" id="handHitY" min="0" max="100" step="0.5" value="20.5" /></label>
+        <label>Largura (%) <input type="number" id="handHitW" min="1" max="100" step="0.5" value="54" /></label>
+        <label>Altura (%) <input type="number" id="handHitH" min="1" max="100" step="0.5" value="48.5" /></label>
+        <div class="hint">A mão original é grande, então a colisão usa uma caixa menor dentro do PNG.</div>
+      </details>
+    </div>
+
+    <div id="arena">
+      <div id="floppaWrap">
+        <img id="floppa" src="images/state0.png" alt="Floppa" />
+        <div id="petZoneDebug" class="debug-box"></div>
+        <div id="dangerZoneDebug" class="debug-box"></div>
+      </div>
+    </div>
+
+    <img id="jumpscare" src="images/state2.png" alt="Jumpscare do Floppa" />
+    <img id="hand" src="images/hand.png" alt="Mão" />
+    <div id="handDebug"></div>
+    <div id="flash"></div>
+
+    <div id="helpModal" class="show">
+      <div class="help-card">
+        <button id="closeHelpBtn" type="button">×</button>
+        <h2>Como jogar</h2>
+        <p>Alise o pelo do floppa, mas cuidado, ele pode ficar com raiva se você alisar demais (ou em um lugar crítico) RAWWWWW</p>
+      </div>
+    </div>
+
+    <div id="gameOver">
+      <div class="gameover-card">
+        <h2>VOCÊ MORREU</h2>
+        <p>O Floppa perdeu a paciência.</p>
+        <p>Pontos: <strong id="finalScore">0.0</strong></p>
+        <button id="restartBtn">Jogar novamente</button>
+      </div>
+    </div>
+
+    <div id="credit">
+      Inspirado no jogo
+      <a href="https://brush-jjaemu.org/" target="_blank" rel="noopener noreferrer">https://brush-jjaemu.org/</a>
+    </div>
+
+    <audio id="roarAudio" preload="auto">
+      <source src="sounds/die_sound_ds.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="pettingAudio" preload="auto" loop>
+      <source src="sounds/alisa.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="purrAudio" preload="auto" loop>
+      <source src="sounds/ronronar.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="angryAudio" preload="auto" loop>
+      <source src="sounds/angry.mp3" type="audio/mpeg" />
+    </audio>
+
+    <audio id="rawwAudio" preload="auto">
+      <source src="sounds/raww.mp3" type="audio/mpeg" />
+    </audio>
+  </div>
+
+  <script>
+    const STATE_CALM = 0;
+    const STATE_ALERT = 1;
+    const STATE_DEAD = 2;
+
+    const config = {
+      debug: false,
+      handSize: 180,
+      petCooldownMs: 60,
+      minSpeedToPet: 3.2,
+      calmThreshold: 12,
+      dangerPetLimit: 22,
+      angerDecayPerFrame: 0.03,
+      petZone: { x: 34, y: 31, w: 50, h: 50 },
+      dangerZone: { x: 27, y: 25, w: 28, h: 32 },
+      handHitbox: { x: 19.5, y: 20.5, w: 54, h: 48.5 }
+    };
+
+    const state = {
+      score: 0,
+      mode: STATE_CALM,
+      alive: true,
+      lastPetAt: 0,
+      mouseX: window.innerWidth / 2,
+      mouseY: window.innerHeight / 2,
+      prevMouseX: window.innerWidth / 2,
+      prevMouseY: window.innerHeight / 2,
+      mouseSpeed: 0,
+      startedAudio: false,
+      angerLevel: 0,
+      isPointerDown: false
+    };
+
+    const els = {
+      body: document.body,
+      floppa: document.getElementById('floppa'),
+      floppaWrap: document.getElementById('floppaWrap'),
+      hand: document.getElementById('hand'),
+      handDebug: document.getElementById('handDebug'),
+      petZoneDebug: document.getElementById('petZoneDebug'),
+      dangerZoneDebug: document.getElementById('dangerZoneDebug'),
+      score: document.getElementById('score'),
+      finalScore: document.getElementById('finalScore'),
+      stateText: document.getElementById('stateText'),
+      angerText: document.getElementById('angerText'),
+      flash: document.getElementById('flash'),
+      jumpscare: document.getElementById('jumpscare'),
+      gameOver: document.getElementById('gameOver'),
+      roarAudio: document.getElementById('roarAudio'),
+      pettingAudio: document.getElementById('pettingAudio'),
+      purrAudio: document.getElementById('purrAudio'),
+      angryAudio: document.getElementById('angryAudio'),
+      rawwAudio: document.getElementById('rawwAudio'),
+      restartBtn: document.getElementById('restartBtn'),
+      helpBtn: document.getElementById('helpBtn'),
+      helpModal: document.getElementById('helpModal'),
+      closeHelpBtn: document.getElementById('closeHelpBtn')
+    };
+
+    const soundVolume = {
+      master: 1,
+      alisa: 0.45,
+      ronronar: 0.35,
+      angry: 0.55,
+      raww: 1,
+      die: 0.8
+    };
+
+    const inputs = {
+      toggleDebug: document.getElementById('toggleDebug'),
+      handScale: document.getElementById('handScale'),
+      petCooldown: document.getElementById('petCooldown'),
+      minSpeed: document.getElementById('minSpeed'),
+      calmThreshold: document.getElementById('calmThreshold'),
+      dangerThreshold: document.getElementById('dangerThreshold'),
+      angerDecay: document.getElementById('angerDecay'),
+      petX: document.getElementById('petX'),
+      petY: document.getElementById('petY'),
+      petW: document.getElementById('petW'),
+      petH: document.getElementById('petH'),
+      dangerX: document.getElementById('dangerX'),
+      dangerY: document.getElementById('dangerY'),
+      dangerW: document.getElementById('dangerW'),
+      dangerH: document.getElementById('dangerH'),
+      handHitX: document.getElementById('handHitX'),
+      handHitY: document.getElementById('handHitY'),
+      handHitW: document.getElementById('handHitW'),
+      handHitH: document.getElementById('handHitH')
+    };
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function updateHUD() {
+      els.score.textContent = state.score.toFixed(1);
+      els.finalScore.textContent = state.score.toFixed(1);
+
+      if (state.mode === STATE_CALM) {
+        els.stateText.textContent = 'Calmo';
+      } else if (state.mode === STATE_ALERT) {
+        els.stateText.textContent = 'Alerta';
+      } else {
+        els.stateText.textContent = 'Morto';
+      }
+
+      const angerPercent = Math.round((state.angerLevel / config.dangerPetLimit) * 100);
+      els.angerText.textContent = `${clamp(angerPercent, 0, 999)}%`;
+      els.angerText.className = 'value' + (state.mode === STATE_ALERT ? ' danger-text' : '');
+    }
+
+    function setHandVisual() {
+      els.hand.style.width = `${config.handSize}px`;
+      els.hand.style.height = `${config.handSize}px`;
+      updateHandDebug();
+    }
+
+    function getWrapRect() {
+      return els.floppaWrap.getBoundingClientRect();
+    }
+
+    function percentRectToScreen(zone) {
+      const rect = getWrapRect();
+      return {
+        x: rect.left + (zone.x / 100) * rect.width,
+        y: rect.top + (zone.y / 100) * rect.height,
+        w: (zone.w / 100) * rect.width,
+        h: (zone.h / 100) * rect.height
+      };
+    }
+
+    function getHandRect() {
+      const size = config.handSize;
+      return {
+        x: state.mouseX - size / 2,
+        y: state.mouseY - size / 2,
+        w: size,
+        h: size
+      };
+    }
+
+    function getHandHitboxRect() {
+      const handRect = getHandRect();
+      return {
+        x: handRect.x + (config.handHitbox.x / 100) * handRect.w,
+        y: handRect.y + (config.handHitbox.y / 100) * handRect.h,
+        w: (config.handHitbox.w / 100) * handRect.w,
+        h: (config.handHitbox.h / 100) * handRect.h
+      };
+    }
+
+    function intersects(a, b) {
+      return (
+        a.x < b.x + b.w &&
+        a.x + a.w > b.x &&
+        a.y < b.y + b.h &&
+        a.y + a.h > b.y
+      );
+    }
+
+    function updateZoneDebug() {
+      const wrapRect = getWrapRect();
+      const pet = percentRectToScreen(config.petZone);
+      const danger = percentRectToScreen(config.dangerZone);
+
+      Object.assign(els.petZoneDebug.style, {
+        left: `${pet.x - wrapRect.left}px`,
+        top: `${pet.y - wrapRect.top}px`,
+        width: `${pet.w}px`,
+        height: `${pet.h}px`
+      });
+
+      Object.assign(els.dangerZoneDebug.style, {
+        left: `${danger.x - wrapRect.left}px`,
+        top: `${danger.y - wrapRect.top}px`,
+        width: `${danger.w}px`,
+        height: `${danger.h}px`
+      });
+    }
+
+    function updateHandDebug() {
+      const hit = getHandHitboxRect();
+      Object.assign(els.handDebug.style, {
+        left: `${hit.x + hit.w / 2}px`,
+        top: `${hit.y + hit.h / 2}px`,
+        width: `${hit.w}px`,
+        height: `${hit.h}px`
+      });
+    }
+
+    function syncDebugClass() {
+      els.body.classList.toggle('debug-on', config.debug);
+      els.body.classList.toggle('dev-on', config.debug);
+    }
+
+    function applyConfigToInputs() {
+      inputs.toggleDebug.checked = config.debug;
+      inputs.handScale.value = config.handSize;
+      inputs.petCooldown.value = config.petCooldownMs;
+      inputs.minSpeed.value = config.minSpeedToPet;
+      inputs.calmThreshold.value = config.calmThreshold;
+      inputs.dangerThreshold.value = config.dangerPetLimit;
+      inputs.angerDecay.value = config.angerDecayPerFrame;
+
+      inputs.petX.value = config.petZone.x;
+      inputs.petY.value = config.petZone.y;
+      inputs.petW.value = config.petZone.w;
+      inputs.petH.value = config.petZone.h;
+
+      inputs.dangerX.value = config.dangerZone.x;
+      inputs.dangerY.value = config.dangerZone.y;
+      inputs.dangerW.value = config.dangerZone.w;
+      inputs.dangerH.value = config.dangerZone.h;
+
+      inputs.handHitX.value = config.handHitbox.x;
+      inputs.handHitY.value = config.handHitbox.y;
+      inputs.handHitW.value = config.handHitbox.w;
+      inputs.handHitH.value = config.handHitbox.h;
+    }
+
+    function applyInputValuesToConfig() {
+      config.debug = !!inputs.toggleDebug.checked;
+      config.handSize = Number(inputs.handScale.value);
+      config.petCooldownMs = Number(inputs.petCooldown.value);
+      config.minSpeedToPet = Number(inputs.minSpeed.value);
+      config.calmThreshold = Number(inputs.calmThreshold.value);
+      config.dangerPetLimit = Number(inputs.dangerThreshold.value);
+      config.angerDecayPerFrame = Number(inputs.angerDecay.value);
+
+      config.petZone.x = Number(inputs.petX.value);
+      config.petZone.y = Number(inputs.petY.value);
+      config.petZone.w = Number(inputs.petW.value);
+      config.petZone.h = Number(inputs.petH.value);
+
+      config.dangerZone.x = Number(inputs.dangerX.value);
+      config.dangerZone.y = Number(inputs.dangerY.value);
+      config.dangerZone.w = Number(inputs.dangerW.value);
+      config.dangerZone.h = Number(inputs.dangerH.value);
+
+      config.handHitbox.x = Number(inputs.handHitX.value);
+      config.handHitbox.y = Number(inputs.handHitY.value);
+      config.handHitbox.w = Number(inputs.handHitW.value);
+      config.handHitbox.h = Number(inputs.handHitH.value);
+
+      syncDebugClass();
+      setHandVisual();
+      updateZoneDebug();
+      updateHUD();
+    }
+
+    function bindControls() {
+      Object.values(inputs).forEach((input) => {
+        input.addEventListener('input', applyInputValuesToConfig);
+        input.addEventListener('change', applyInputValuesToConfig);
+      });
+    }
+
+    function moveHand(x, y) {
+      state.prevMouseX = state.mouseX;
+      state.prevMouseY = state.mouseY;
+      state.mouseX = x;
+      state.mouseY = y;
+
+      const dx = state.mouseX - state.prevMouseX;
+      const dy = state.mouseY - state.prevMouseY;
+      state.mouseSpeed = Math.sqrt(dx * dx + dy * dy);
+
+      els.hand.style.left = `${x}px`;
+      els.hand.style.top = `${y}px`;
+      updateHandDebug();
+    }
+
+    function setPointerDown(value) {
+      state.isPointerDown = value;
+      els.hand.classList.toggle('pressing', value);
+      preloadInteraction();
+    }
+
+    function setFloppaState(mode) {
+      if (state.mode === mode) return;
+
+      state.mode = mode;
+
+      if (mode === STATE_CALM) {
+        els.floppa.src = 'images/state0.png';
+      } else if (mode === STATE_ALERT) {
+        els.floppa.src = 'images/state1.png';
+        pulseDanger();
+      }
+
+      updateHUD();
+    }
+
+    function pulseDanger() {
+      els.flash.classList.remove('dangerPulse');
+      void els.flash.offsetWidth;
+      els.flash.classList.add('dangerPulse');
+    }
+
+    function gameOver() {
+      if (!state.alive || state.mode === STATE_DEAD) return;
+
+      state.alive = false;
+      state.mode = STATE_DEAD;
+
+      els.floppa.src = 'images/state1.png';
+      els.jumpscare.classList.remove('show');
+      void els.jumpscare.offsetWidth;
+      els.jumpscare.classList.add('show');
+
+      playDeathSounds();
+
+      setTimeout(() => {
+        els.gameOver.classList.add('show');
+      }, 450);
+
+      updateHUD();
+    }
+
+    function restartGame() {
+      stopGameplayAudio();
+      stopAudio(els.roarAudio);
+      stopAudio(els.rawwAudio);
+
+      state.score = 0;
+      state.alive = true;
+      state.lastPetAt = 0;
+      state.angerLevel = 0;
+      state.isPointerDown = false;
+      state.mouseSpeed = 0;
+
+      els.hand.classList.remove('pressing');
+      els.jumpscare.classList.remove('show');
+      els.gameOver.classList.remove('show');
+
+      setFloppaState(STATE_CALM);
+      updateHUD();
+    }
+
+    function tryPet(now) {
+      if (!state.alive) return;
+      if (!state.isPointerDown) return;
+      if (now - state.lastPetAt < config.petCooldownMs) return;
+
+      const handHit = getHandHitboxRect();
+      const bodyZone = percentRectToScreen(config.petZone);
+      const headZone = percentRectToScreen(config.dangerZone);
+
+      const inBody = intersects(handHit, bodyZone);
+      const inHead = intersects(handHit, headZone);
+
+      if (!inBody && !inHead) return;
+
+      const movedEnough = state.mouseSpeed >= config.minSpeedToPet;
+      const canPetBody = inBody && movedEnough;
+      const canPetHead = inHead;
+
+      if (!canPetBody && !canPetHead) return;
+
+      state.lastPetAt = now;
+
+      if (canPetHead) {
+        state.score += 2;
+        state.angerLevel += state.mode === STATE_ALERT ? 2.8 : 1.8;
+      } else if (canPetBody) {
+        if (state.mode === STATE_CALM) {
+          state.score += 0.5;
+          state.angerLevel += 0.45;
+        } else {
+          state.score += 2;
+          state.angerLevel += 1.15;
+        }
+      }
+
+      if (state.mode === STATE_CALM && state.angerLevel >= config.calmThreshold) {
+        setFloppaState(STATE_ALERT);
+      }
+
+      if (state.angerLevel >= config.dangerPetLimit) {
+        updateHUD();
+        gameOver();
+        return;
+      }
+
+      updateHUD();
+    }
+
+    function coolDownAnger() {
+      if (!state.alive) return;
+      if (state.mode === STATE_DEAD) return;
+
+      const decay = config.angerDecayPerFrame;
+
+      if (!state.isPointerDown) {
+        state.angerLevel = Math.max(0, state.angerLevel - decay);
+      } else if (state.mode === STATE_ALERT && state.mouseSpeed < config.minSpeedToPet * 0.4) {
+        state.angerLevel = Math.max(0, state.angerLevel - decay * 0.45);
+      }
+
+      if (state.mode === STATE_ALERT && state.angerLevel < config.calmThreshold * 0.55) {
+        setFloppaState(STATE_CALM);
+      }
+    }
+
+    function gameLoop(now) {
+      coolDownAnger();
+      tryPet(now);
+      updateSoundscape();
+      updateHUD();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function preloadInteraction() {
+      if (state.startedAudio) return;
+      state.startedAudio = true;
+
+      applySoundVolumes();
+
+      [
+        els.roarAudio,
+        els.rawwAudio,
+        els.pettingAudio,
+        els.purrAudio,
+        els.angryAudio
+      ].forEach((audio) => {
+        audio.load();
+      });
+    }
+
+    function initPointerEvents() {
+      window.addEventListener('mousemove', (e) => {
+        preloadInteraction();
+        moveHand(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('touchmove', (e) => {
+        preloadInteraction();
+        const touch = e.touches[0];
+        if (!touch) return;
+        moveHand(touch.clientX, touch.clientY);
+      }, { passive: true });
+
+      window.addEventListener('mousedown', () => setPointerDown(true));
+      window.addEventListener('mouseup', () => setPointerDown(false));
+
+      window.addEventListener('touchstart', () => setPointerDown(true), { passive: true });
+      window.addEventListener('touchend', () => setPointerDown(false), { passive: true });
+      window.addEventListener('touchcancel', () => setPointerDown(false), { passive: true });
+    }
+
+    function initHelpModal() {
+      const pressed = new Set();
+
+      function tryToggleDevMode() {
+        if (pressed.has('KeyR') && pressed.has('KeyA') && pressed.has('KeyW')) {
+          config.debug = !config.debug;
+          inputs.toggleDebug.checked = config.debug;
+          syncDebugClass();
+          pressed.clear();
+        }
+      }
+
+      window.addEventListener('keydown', (e) => {
+        pressed.add(e.code);
+        tryToggleDevMode();
+      });
+
+      window.addEventListener('keyup', (e) => {
+        pressed.delete(e.code);
+      });
+
+      els.helpBtn.addEventListener('click', () => {
+        els.helpModal.classList.add('show');
+      });
+
+      els.closeHelpBtn.addEventListener('click', () => {
+        els.helpModal.classList.remove('show');
+      });
+
+      els.helpModal.addEventListener('click', (e) => {
+        if (e.target === els.helpModal) {
+          els.helpModal.classList.remove('show');
+        }
+      });
+    }
+
+    function applySoundVolumes() {
+      els.pettingAudio.volume = Math.min(1, soundVolume.master * soundVolume.alisa);
+      els.purrAudio.volume = Math.min(1, soundVolume.master * soundVolume.ronronar);
+      els.angryAudio.volume = Math.min(1, soundVolume.master * soundVolume.angry);
+      els.rawwAudio.volume = Math.min(1, soundVolume.master * soundVolume.raww);
+      els.roarAudio.volume = Math.min(1, soundVolume.master * soundVolume.die);
+    }
+
+    function stopAudio(audio, reset = true) {
+      if (!audio) return;
+      audio.pause();
+      if (reset) audio.currentTime = 0;
+    }
+
+    function pauseAudio(audio) {
+      if (!audio) return;
+      audio.pause();
+    }
+
+    function ensureLoop(audio) {
+      if (!audio) return;
+      audio.loop = true;
+      if (audio.paused) {
+        audio.play().catch(() => {});
+      }
+    }
+
+    function stopGameplayAudio() {
+      pauseAudio(els.pettingAudio);
+      pauseAudio(els.purrAudio);
+      pauseAudio(els.angryAudio);
+    }
+
+    function updateSoundscape() {
+      if (!state.alive || state.mode === STATE_DEAD) {
+        stopGameplayAudio();
+        return;
+      }
+
+      const handHit = getHandHitboxRect();
+      const bodyZone = percentRectToScreen(config.petZone);
+      const headZone = percentRectToScreen(config.dangerZone);
+
+      const inBody = intersects(handHit, bodyZone);
+      const inHead = intersects(handHit, headZone);
+      const touchingFloppa = inBody || inHead;
+
+      const movingEnough = state.mouseSpeed >= config.minSpeedToPet;
+
+      const isBodyPetting = state.isPointerDown && inBody && movingEnough;
+      const isHeadPetting = state.isPointerDown && inHead;
+      const isActuallyPetting = isBodyPetting || isHeadPetting;
+
+      if (isActuallyPetting && movingEnough) {
+        ensureLoop(els.pettingAudio);
+      } else {
+        pauseAudio(els.pettingAudio);
+      }
+
+      if (state.isPointerDown && touchingFloppa) {
+        if (state.mode === STATE_CALM) {
+          ensureLoop(els.purrAudio);
+          pauseAudio(els.angryAudio);
+        } else if (state.mode === STATE_ALERT) {
+          ensureLoop(els.angryAudio);
+          pauseAudio(els.purrAudio);
+        }
+      } else {
+        pauseAudio(els.purrAudio);
+        pauseAudio(els.angryAudio);
+      }
+    }
+
+    function playDeathSounds() {
+      stopGameplayAudio();
+
+      stopAudio(els.rawwAudio);
+      stopAudio(els.roarAudio);
+
+      applySoundVolumes();
+
+      els.rawwAudio.loop = false;
+      els.roarAudio.loop = false;
+
+      els.rawwAudio.play().catch(() => {});
+
+      setTimeout(() => {
+        if (state.mode === STATE_DEAD) {
+          els.roarAudio.currentTime = 0;
+          els.roarAudio.play().catch(() => {});
+        }
+      }, 140);
+    }
+
+    function init() {
+      bindControls();
+      applyConfigToInputs();
+      applyInputValuesToConfig();
+      applySoundVolumes();
+
+      initPointerEvents();
+      initHelpModal();
+
+      els.restartBtn.addEventListener('click', restartGame);
+
+      window.addEventListener('resize', () => {
+        updateZoneDebug();
+        updateHandDebug();
+      });
+
+      moveHand(window.innerWidth / 2, window.innerHeight / 2);
+      restartGame();
+      els.helpModal.classList.add('show');
+      requestAnimationFrame(gameLoop);
+    }
+
+    init();
+    window.floppaConfig = config;
+  </script>
+</body>
+</html>
