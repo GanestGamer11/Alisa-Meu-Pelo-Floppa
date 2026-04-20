@@ -217,10 +217,9 @@
       100% { background: rgba(255,255,255,0); }
     }
 
-    #helpBtn {
+    #helpBtn, #leaderboardBtn {
       position: absolute;
       left: 1em;
-      top: 6em;
       z-index: 36;
       width: 34px;
       height: 34px;
@@ -232,6 +231,9 @@
       font-weight: 700;
       box-shadow: 0 8px 18px rgba(0,0,0,0.25);
     }
+
+    #helpBtn { top: 6.5em; }
+    #leaderboardBtn { top: 9.15em; }
 
     #credit {
       position: absolute;
@@ -255,7 +257,7 @@
       text-decoration: underline;
     }
 
-    #helpModal {
+    #helpModal, #leaderboardModal {
       position: absolute;
       inset: 0;
       z-index: 70;
@@ -267,11 +269,11 @@
       padding: 20px;
     }
 
-    #helpModal.show {
+    #helpModal.show, #leaderboardModal.show {
       display: flex;
     }
 
-    .help-card {
+    .help-card, .leaderboard-card {
       position: relative;
       width: min(92vw, 560px);
       background: rgba(17,18,23,0.96);
@@ -281,7 +283,7 @@
       box-shadow: 0 24px 80px rgba(0,0,0,0.45);
     }
 
-    .help-card h2 {
+    .help-card h2, .leaderboard-card h2 {
       margin: 0 0 12px;
       font-size: 28px;
     }
@@ -293,7 +295,7 @@
       font-size: 16px;
     }
 
-    #closeHelpBtn {
+    #closeHelpBtn, #closeLeaderboardBtn {
       position: absolute;
       top: 12px;
       right: 12px;
@@ -324,12 +326,29 @@
 
     .gameover-card {
       text-align: center;
-      background: transparent;
-      border: 0;
+      background: rgba(15, 15, 20, 0.35);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 20px;
       padding: 24px;
-      width: min(92vw, 700px);
-      box-shadow: none;
+      width: min(92vw, 720px);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.35);
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .gameover-left {
+      text-align: center;
+    }
+
+    .gameover-right {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 1em;
+      margin: 1em;
+      text-align: left;
     }
 
     .gameover-card h2 {
@@ -345,11 +364,16 @@
       white-space: nowrap;
     }
 
-    .gameover-card p {
+    .gameover-card p, .gameover-right p {
       color: #e4e4e7;
       margin-bottom: 16px;
-      font-size: 20px;
+      font-size: 18px;
       text-shadow: 0 2px 10px rgba(0,0,0,0.95);
+    }
+
+    .gameover-right h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
     }
 
     button {
@@ -364,6 +388,12 @@
 
     button:hover {
       filter: brightness(1.05);
+    }
+
+    .secondary-btn {
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.08);
     }
 
     #jumpscare {
@@ -408,16 +438,148 @@
       color: #fca5a5;
     }
 
+    .rank-panel {
+      display: grid;
+      gap: 10px;
+    }
+
+    .rank-self {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.18);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+
+    .rank-list {
+      display: grid;
+      gap: 8px;
+      max-height: 280px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .rank-row {
+      display: grid;
+      grid-template-columns: 34px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      font-size: 14px;
+    }
+
+    .rank-row.is-player {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.25);
+    }
+
+    .rank-num {
+      font-weight: 700;
+      color: #fbbf24;
+    }
+
+    .rank-name {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .rank-score {
+      font-weight: 700;
+    }
+
+    .submit-box {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .submit-box input {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.25);
+      color: #fff;
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      cursor: text;
+    }
+
+    .submit-box input:focus {
+      border-color: rgba(245, 158, 11, 0.45);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+    }
+
+    .submit-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .status-text {
+      min-height: 18px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .status-text.error {
+      color: #fca5a5;
+    }
+
+    .status-text.ok {
+      color: #86efac;
+    }
+
+    .leaderboard-card {
+      width: min(92vw, 680px);
+    }
+
+    .leaderboard-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-right: 44px;
+    }
+
+    .small-note {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
     @media (max-width: 900px) {
       #controls {
         width: 280px;
       }
+
       #hand {
         width: 140px;
         height: 140px;
       }
+
       #helpBtn {
         top: 116px;
+      }
+
+      #leaderboardBtn {
+        top: 160px;
+      }
+
+      .gameover-card {
+        grid-template-columns: 1fr;
+      }
+
+      .gameover-card h2 {
+        white-space: normal;
       }
     }
   </style>
@@ -432,6 +594,7 @@
     </div>
 
     <button id="helpBtn" type="button">?</button>
+    <button id="leaderboardBtn" type="button">🏆</button>
 
     <div id="controls">
       <h2>Ajustes</h2>
@@ -511,12 +674,54 @@
       </div>
     </div>
 
+    <div id="leaderboardModal">
+      <div class="leaderboard-card">
+        <button id="closeLeaderboardBtn" type="button">×</button>
+        <div class="leaderboard-head">
+          <div>
+            <h2>Ranking</h2>
+            <div class="small-note">Top 10 global e sua melhor colocação.</div>
+          </div>
+          <button id="refreshLeaderboardBtn" type="button" class="secondary-btn">Atualizar</button>
+        </div>
+        <div class="rank-panel">
+          <div class="rank-self">
+            <div>
+              <div class="small-note">Sua colocação</div>
+              <strong id="leaderboardPlacement">—</strong>
+            </div>
+            <div>
+              <div class="small-note">Melhor score</div>
+              <strong id="leaderboardBest">—</strong>
+            </div>
+          </div>
+          <div id="leaderboardStatus" class="status-text">Carregando ranking...</div>
+          <div id="leaderboardList" class="rank-list"></div>
+        </div>
+      </div>
+    </div>
+
     <div id="gameOver">
       <div class="gameover-card">
-        <h2>VOCÊ MORREU</h2>
-        <p>O Floppa perdeu a paciência.</p>
-        <p>Pontos: <strong id="finalScore">0.0</strong></p>
-        <button id="restartBtn">Jogar novamente</button>
+        <div class="gameover-left">
+          <h2>VOCÊ MORREU</h2>
+          <p>O Floppa perdeu a paciência.</p>
+          <p>Pontos: <strong id="finalScore">0.0</strong></p>
+          <button id="restartBtn">Jogar novamente</button>
+        </div>
+
+        <div class="gameover-right">
+          <h3>Enviar para o ranking</h3>
+          <p>Deixa seu nome e decide se quer subir o score agora.</p>
+          <div class="submit-box">
+            <input id="playerNameInput" type="text" maxlength="15" placeholder="Seu nome (até 15 caracteres)" />
+            <div class="submit-actions">
+              <button id="submitScoreBtn" type="button">Postar score</button>
+              <button id="skipSubmitBtn" type="button" class="secondary-btn">Ranking</button>
+            </div>
+            <div id="submitStatus" class="status-text"></div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -546,674 +751,841 @@
     </audio>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-  const STATE_CALM = 0;
-  const STATE_ALERT = 1;
-  const STATE_DEAD = 2;
+    const SUPABASE_URL = 'https://dlwafczxgdhvzxvdulfz.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_qWvFbYwrKsdujwUyNmCdQA_Ssb2FCak';
+    const LEADERBOARD_TABLE = 'floppa_scores';
 
-  const config = {
-    debug: false,
-    handSize: 180,
-    petCooldownMs: 60,
-    minSpeedToPet: 3.2,
-    calmThreshold: 12,
-    dangerPetLimit: 22,
-    angerDecayPerFrame: 0.03,
-    petZone: { x: 34, y: 31, w: 50, h: 50 },
-    dangerZone: { x: 27, y: 25, w: 28, h: 32 },
-    handHitbox: { x: 19.5, y: 20.5, w: 54, h: 48.5 }
-  };
+    const STATE_CALM = 0;
+    const STATE_ALERT = 1;
+    const STATE_DEAD = 2;
 
-  const state = {
-    score: 0,
-    mode: STATE_CALM,
-    alive: true,
-    lastPetAt: 0,
-    mouseX: window.innerWidth / 2,
-    mouseY: window.innerHeight / 2,
-    prevMouseX: window.innerWidth / 2,
-    prevMouseY: window.innerHeight / 2,
-    mouseSpeed: 0,
-    startedAudio: false,
-    angerLevel: 0,
-    isPointerDown: false,
-    alertThreshold: config.calmThreshold,
-    lastPetZone: null,
-    sameZoneStreak: 0
-  };
-
-  const els = {
-    body: document.body,
-    floppa: document.getElementById('floppa'),
-    floppaWrap: document.getElementById('floppaWrap'),
-    hand: document.getElementById('hand'),
-    handDebug: document.getElementById('handDebug'),
-    petZoneDebug: document.getElementById('petZoneDebug'),
-    dangerZoneDebug: document.getElementById('dangerZoneDebug'),
-    score: document.getElementById('score'),
-    finalScore: document.getElementById('finalScore'),
-    stateText: document.getElementById('stateText'),
-    angerText: document.getElementById('angerText'),
-    flash: document.getElementById('flash'),
-    jumpscare: document.getElementById('jumpscare'),
-    gameOver: document.getElementById('gameOver'),
-    roarAudio: document.getElementById('roarAudio'),
-    pettingAudio: document.getElementById('pettingAudio'),
-    purrAudio: document.getElementById('purrAudio'),
-    angryAudio: document.getElementById('angryAudio'),
-    rawwAudio: document.getElementById('rawwAudio'),
-    restartBtn: document.getElementById('restartBtn'),
-    helpBtn: document.getElementById('helpBtn'),
-    helpModal: document.getElementById('helpModal'),
-    closeHelpBtn: document.getElementById('closeHelpBtn')
-  };
-
-  const soundVolume = {
-    master: 1,
-    alisa: 0.45,
-    ronronar: 0.35,
-    angry: 0.55,
-    raww: 1,
-    die: 0.8
-  };
-
-  const inputs = {
-    toggleDebug: document.getElementById('toggleDebug'),
-    handScale: document.getElementById('handScale'),
-    petCooldown: document.getElementById('petCooldown'),
-    minSpeed: document.getElementById('minSpeed'),
-    calmThreshold: document.getElementById('calmThreshold'),
-    dangerThreshold: document.getElementById('dangerThreshold'),
-    angerDecay: document.getElementById('angerDecay'),
-    petX: document.getElementById('petX'),
-    petY: document.getElementById('petY'),
-    petW: document.getElementById('petW'),
-    petH: document.getElementById('petH'),
-    dangerX: document.getElementById('dangerX'),
-    dangerY: document.getElementById('dangerY'),
-    dangerW: document.getElementById('dangerW'),
-    dangerH: document.getElementById('dangerH'),
-    handHitX: document.getElementById('handHitX'),
-    handHitY: document.getElementById('handHitY'),
-    handHitW: document.getElementById('handHitW'),
-    handHitH: document.getElementById('handHitH')
-  };
-
-  function clamp(value, min, max) {
-    return Math.min(max, Math.max(min, value));
-  }
-
-  function rand(min, max) {
-    return min + Math.random() * (max - min);
-  }
-
-  function getDynamicAlertThreshold() {
-    const difficulty = Math.min(1, state.score / 300);
-
-    const base = config.calmThreshold;
-    const minThreshold = Math.max(4.5, base - 4.5 - difficulty * 2.5);
-    const maxThreshold = Math.max(minThreshold + 1.5, base + 1.5 - difficulty * 1.5);
-
-    return rand(minThreshold, maxThreshold);
-  }
-
-  function rerollAlertThreshold() {
-    state.alertThreshold = getDynamicAlertThreshold();
-  }
-
-  function resetPetPattern() {
-    state.lastPetZone = null;
-    state.sameZoneStreak = 0;
-  }
-
-  function registerPetZone(zoneName) {
-    if (state.lastPetZone === zoneName) {
-      state.sameZoneStreak += 1;
-    } else {
-      state.lastPetZone = zoneName;
-      state.sameZoneStreak = 1;
-    }
-  }
-
-  function getZonePenaltyMultiplier(zoneName) {
-    const extraHits = Math.max(0, state.sameZoneStreak - 1);
-
-    if (zoneName === 'head') {
-      return 1 + Math.min(1.1, extraHits * 0.16);
-    }
-
-    return 1 + Math.min(0.55, extraHits * 0.08);
-  }
-
-  function updateHUD() {
-    els.score.textContent = state.score.toFixed(1);
-    els.finalScore.textContent = state.score.toFixed(1);
-
-    if (state.mode === STATE_CALM) {
-      els.stateText.textContent = `Calmo (${state.alertThreshold.toFixed(1)})`;
-    } else if (state.mode === STATE_ALERT) {
-      els.stateText.textContent = 'Alerta';
-    } else {
-      els.stateText.textContent = 'Morto';
-    }
-
-    const angerPercent = Math.round((state.angerLevel / config.dangerPetLimit) * 100);
-    els.angerText.textContent = `${clamp(angerPercent, 0, 999)}%`;
-    els.angryAudio.className = 'value' + (state.mode === STATE_ALERT ? ' danger-text' : '');
-  }
-
-  function setHandVisual() {
-    els.hand.style.width = `${config.handSize}px`;
-    els.hand.style.height = `${config.handSize}px`;
-    updateHandDebug();
-  }
-
-  function getWrapRect() {
-    return els.floppaWrap.getBoundingClientRect();
-  }
-
-  function percentRectToScreen(zone) {
-    const rect = getWrapRect();
-    return {
-      x: rect.left + (zone.x / 100) * rect.width,
-      y: rect.top + (zone.y / 100) * rect.height,
-      w: (zone.w / 100) * rect.width,
-      h: (zone.h / 100) * rect.height
+    const config = {
+      debug: false,
+      handSize: 180,
+      petCooldownMs: 60,
+      minSpeedToPet: 3.2,
+      calmThreshold: 12,
+      dangerPetLimit: 22,
+      angerDecayPerFrame: 0.03,
+      petZone: { x: 34, y: 31, w: 50, h: 50 },
+      dangerZone: { x: 27, y: 25, w: 28, h: 32 },
+      handHitbox: { x: 19.5, y: 20.5, w: 54, h: 48.5 }
     };
-  }
 
-  function getHandRect() {
-    const size = config.handSize;
-    return {
-      x: state.mouseX - size / 2,
-      y: state.mouseY - size / 2,
-      w: size,
-      h: size
+    const state = {
+      score: 0,
+      mode: STATE_CALM,
+      alive: true,
+      lastPetAt: 0,
+      mouseX: window.innerWidth / 2,
+      mouseY: window.innerHeight / 2,
+      prevMouseX: window.innerWidth / 2,
+      prevMouseY: window.innerHeight / 2,
+      mouseSpeed: 0,
+      startedAudio: false,
+      angerLevel: 0,
+      isPointerDown: false,
+      alertThreshold: config.calmThreshold,
+      lastPetZone: null,
+      sameZoneStreak: 0,
+      submittedThisRun: false,
+      playerBestPlacement: null,
+      playerBestScore: null,
+      leaderboardRows: [],
+      playerName: localStorage.getItem('floppa_player_name') || ''
     };
-  }
 
-  function getHandHitboxRect() {
-    const handRect = getHandRect();
-    return {
-      x: handRect.x + (config.handHitbox.x / 100) * handRect.w,
-      y: handRect.y + (config.handHitbox.y / 100) * handRect.h,
-      w: (config.handHitbox.w / 100) * handRect.w,
-      h: (config.handHitbox.h / 100) * handRect.h
+    const els = {
+      body: document.body,
+      floppa: document.getElementById('floppa'),
+      floppaWrap: document.getElementById('floppaWrap'),
+      hand: document.getElementById('hand'),
+      handDebug: document.getElementById('handDebug'),
+      petZoneDebug: document.getElementById('petZoneDebug'),
+      dangerZoneDebug: document.getElementById('dangerZoneDebug'),
+      score: document.getElementById('score'),
+      finalScore: document.getElementById('finalScore'),
+      stateText: document.getElementById('stateText'),
+      angerText: document.getElementById('angerText'),
+      flash: document.getElementById('flash'),
+      jumpscare: document.getElementById('jumpscare'),
+      gameOver: document.getElementById('gameOver'),
+      roarAudio: document.getElementById('roarAudio'),
+      pettingAudio: document.getElementById('pettingAudio'),
+      purrAudio: document.getElementById('purrAudio'),
+      angryAudio: document.getElementById('angryAudio'),
+      rawwAudio: document.getElementById('rawwAudio'),
+      restartBtn: document.getElementById('restartBtn'),
+      helpBtn: document.getElementById('helpBtn'),
+      leaderboardBtn: document.getElementById('leaderboardBtn'),
+      helpModal: document.getElementById('helpModal'),
+      leaderboardModal: document.getElementById('leaderboardModal'),
+      closeHelpBtn: document.getElementById('closeHelpBtn'),
+      closeLeaderboardBtn: document.getElementById('closeLeaderboardBtn'),
+      refreshLeaderboardBtn: document.getElementById('refreshLeaderboardBtn'),
+      leaderboardPlacement: document.getElementById('leaderboardPlacement'),
+      leaderboardBest: document.getElementById('leaderboardBest'),
+      leaderboardStatus: document.getElementById('leaderboardStatus'),
+      leaderboardList: document.getElementById('leaderboardList'),
+      playerNameInput: document.getElementById('playerNameInput'),
+      submitScoreBtn: document.getElementById('submitScoreBtn'),
+      skipSubmitBtn: document.getElementById('skipSubmitBtn'),
+      submitStatus: document.getElementById('submitStatus')
     };
-  }
 
-  function intersects(a, b) {
-    return (
-      a.x < b.x + b.w &&
-      a.x + a.w > b.x &&
-      a.y < b.y + b.h &&
-      a.y + a.h > b.y
-    );
-  }
+    const soundVolume = {
+      master: 1,
+      alisa: 0.45,
+      ronronar: 0.35,
+      angry: 0.55,
+      raww: 1,
+      die: 0.8
+    };
 
-  function updateZoneDebug() {
-    const wrapRect = getWrapRect();
-    const pet = percentRectToScreen(config.petZone);
-    const danger = percentRectToScreen(config.dangerZone);
+    const inputs = {
+      toggleDebug: document.getElementById('toggleDebug'),
+      handScale: document.getElementById('handScale'),
+      petCooldown: document.getElementById('petCooldown'),
+      minSpeed: document.getElementById('minSpeed'),
+      calmThreshold: document.getElementById('calmThreshold'),
+      dangerThreshold: document.getElementById('dangerThreshold'),
+      angerDecay: document.getElementById('angerDecay'),
+      petX: document.getElementById('petX'),
+      petY: document.getElementById('petY'),
+      petW: document.getElementById('petW'),
+      petH: document.getElementById('petH'),
+      dangerX: document.getElementById('dangerX'),
+      dangerY: document.getElementById('dangerY'),
+      dangerW: document.getElementById('dangerW'),
+      dangerH: document.getElementById('dangerH'),
+      handHitX: document.getElementById('handHitX'),
+      handHitY: document.getElementById('handHitY'),
+      handHitW: document.getElementById('handHitW'),
+      handHitH: document.getElementById('handHitH')
+    };
 
-    Object.assign(els.petZoneDebug.style, {
-      left: `${pet.x - wrapRect.left}px`,
-      top: `${pet.y - wrapRect.top}px`,
-      width: `${pet.w}px`,
-      height: `${pet.h}px`
-    });
+    const hasSupabaseConfig = () =>
+      typeof window.supabase !== 'undefined' &&
+      SUPABASE_URL &&
+      SUPABASE_ANON_KEY &&
+      !SUPABASE_URL.includes('COLE_AQUI') &&
+      !SUPABASE_ANON_KEY.includes('COLE_AQUI');
 
-    Object.assign(els.dangerZoneDebug.style, {
-      left: `${danger.x - wrapRect.left}px`,
-      top: `${danger.y - wrapRect.top}px`,
-      width: `${danger.w}px`,
-      height: `${danger.h}px`
-    });
-  }
+    const supabaseClient = hasSupabaseConfig()
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
 
-  function updateHandDebug() {
-    const hit = getHandHitboxRect();
-    Object.assign(els.handDebug.style, {
-      left: `${hit.x + hit.w / 2}px`,
-      top: `${hit.y + hit.h / 2}px`,
-      width: `${hit.w}px`,
-      height: `${hit.h}px`
-    });
-  }
-
-  function syncDebugClass() {
-    els.body.classList.toggle('debug-on', config.debug);
-    els.body.classList.toggle('dev-on', config.debug);
-  }
-
-  function applyConfigToInputs() {
-    inputs.toggleDebug.checked = config.debug;
-    inputs.handScale.value = config.handSize;
-    inputs.petCooldown.value = config.petCooldownMs;
-    inputs.minSpeed.value = config.minSpeedToPet;
-    inputs.calmThreshold.value = config.calmThreshold;
-    inputs.dangerThreshold.value = config.dangerPetLimit;
-    inputs.angerDecay.value = config.angerDecayPerFrame;
-
-    inputs.petX.value = config.petZone.x;
-    inputs.petY.value = config.petZone.y;
-    inputs.petW.value = config.petZone.w;
-    inputs.petH.value = config.petZone.h;
-
-    inputs.dangerX.value = config.dangerZone.x;
-    inputs.dangerY.value = config.dangerZone.y;
-    inputs.dangerW.value = config.dangerZone.w;
-    inputs.dangerH.value = config.dangerZone.h;
-
-    inputs.handHitX.value = config.handHitbox.x;
-    inputs.handHitY.value = config.handHitbox.y;
-    inputs.handHitW.value = config.handHitbox.w;
-    inputs.handHitH.value = config.handHitbox.h;
-  }
-
-  function applyInputValuesToConfig() {
-    config.debug = !!inputs.toggleDebug.checked;
-    config.handSize = Number(inputs.handScale.value);
-    config.petCooldownMs = Number(inputs.petCooldown.value);
-    config.minSpeedToPet = Number(inputs.minSpeed.value);
-    config.calmThreshold = Number(inputs.calmThreshold.value);
-    config.dangerPetLimit = Number(inputs.dangerThreshold.value);
-    config.angerDecayPerFrame = Number(inputs.angerDecay.value);
-
-    config.petZone.x = Number(inputs.petX.value);
-    config.petZone.y = Number(inputs.petY.value);
-    config.petZone.w = Number(inputs.petW.value);
-    config.petZone.h = Number(inputs.petH.value);
-
-    config.dangerZone.x = Number(inputs.dangerX.value);
-    config.dangerZone.y = Number(inputs.dangerY.value);
-    config.dangerZone.w = Number(inputs.dangerW.value);
-    config.dangerZone.h = Number(inputs.dangerH.value);
-
-    config.handHitbox.x = Number(inputs.handHitX.value);
-    config.handHitbox.y = Number(inputs.handHitY.value);
-    config.handHitbox.w = Number(inputs.handHitW.value);
-    config.handHitbox.h = Number(inputs.handHitH.value);
-
-    rerollAlertThreshold();
-    syncDebugClass();
-    setHandVisual();
-    updateZoneDebug();
-    updateHUD();
-  }
-
-  function bindControls() {
-    Object.values(inputs).forEach((input) => {
-      input.addEventListener('input', applyInputValuesToConfig);
-      input.addEventListener('change', applyInputValuesToConfig);
-    });
-  }
-
-  function moveHand(x, y) {
-    state.prevMouseX = state.mouseX;
-    state.prevMouseY = state.mouseY;
-    state.mouseX = x;
-    state.mouseY = y;
-
-    const dx = state.mouseX - state.prevMouseX;
-    const dy = state.mouseY - state.prevMouseY;
-    state.mouseSpeed = Math.sqrt(dx * dx + dy * dy);
-
-    els.hand.style.left = `${x}px`;
-    els.hand.style.top = `${y}px`;
-    updateHandDebug();
-  }
-
-  function setPointerDown(value) {
-    state.isPointerDown = value;
-    els.hand.classList.toggle('pressing', value);
-    preloadInteraction();
-
-    if (!value) {
-      resetPetPattern();
-    }
-  }
-
-  function setFloppaState(mode) {
-    if (state.mode === mode) return;
-
-    state.mode = mode;
-
-    if (mode === STATE_CALM) {
-      els.floppa.src = 'images/state0.png';
-      rerollAlertThreshold();
-      resetPetPattern();
-    } else if (mode === STATE_ALERT) {
-      els.floppa.src = 'images/state1.png';
-      pulseDanger();
-      resetPetPattern();
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
     }
 
-    updateHUD();
-  }
+    function rand(min, max) {
+      return min + Math.random() * (max - min);
+    }
 
-  function pulseDanger() {
-    els.flash.classList.remove('dangerPulse');
-    void els.flash.offsetWidth;
-    els.flash.classList.add('dangerPulse');
-  }
+    function sanitizePlayerName(value) {
+      return value
+        .replace(/\s+/g, ' ')
+        .replace(/[^\p{L}\p{N} _\-.]/gu, '')
+        .trim()
+        .slice(0, 15);
+    }
 
-  function gameOver() {
-    if (!state.alive || state.mode === STATE_DEAD) return;
+    function getDynamicAlertThreshold() {
+      const difficulty = Math.min(1, state.score / 300);
+      const base = config.calmThreshold;
+      const minThreshold = Math.max(4.5, base - 4.5 - difficulty * 2.5);
+      const maxThreshold = Math.max(minThreshold + 1.5, base + 1.5 - difficulty * 1.5);
+      return rand(minThreshold, maxThreshold);
+    }
 
-    state.alive = false;
-    state.mode = STATE_DEAD;
+    function rerollAlertThreshold() {
+      state.alertThreshold = getDynamicAlertThreshold();
+    }
 
-    els.floppa.src = 'images/state1.png';
-    els.jumpscare.classList.remove('show');
-    void els.jumpscare.offsetWidth;
-    els.jumpscare.classList.add('show');
+    function resetPetPattern() {
+      state.lastPetZone = null;
+      state.sameZoneStreak = 0;
+    }
 
-    playDeathSounds();
-
-    setTimeout(() => {
-      els.gameOver.classList.add('show');
-    }, 450);
-
-    updateHUD();
-  }
-
-  function restartGame() {
-    stopGameplayAudio();
-    stopAudio(els.roarAudio);
-    stopAudio(els.rawwAudio);
-
-    state.score = 0;
-    state.alive = true;
-    state.lastPetAt = 0;
-    state.angerLevel = 0;
-    state.isPointerDown = false;
-    state.mouseSpeed = 0;
-
-    resetPetPattern();
-
-    els.hand.classList.remove('pressing');
-    els.jumpscare.classList.remove('show');
-    els.gameOver.classList.remove('show');
-
-    rerollAlertThreshold();
-    setFloppaState(STATE_CALM);
-    updateHUD();
-  }
-
-  function tryPet(now) {
-    if (!state.alive) return;
-    if (!state.isPointerDown) return;
-    if (now - state.lastPetAt < config.petCooldownMs) return;
-
-    const handHit = getHandHitboxRect();
-    const bodyZone = percentRectToScreen(config.petZone);
-    const headZone = percentRectToScreen(config.dangerZone);
-
-    const inBody = intersects(handHit, bodyZone);
-    const inHead = intersects(handHit, headZone);
-
-    if (!inBody && !inHead) return;
-
-    const movedEnough = state.mouseSpeed >= config.minSpeedToPet;
-    const canPetBody = inBody && movedEnough;
-    const canPetHead = inHead;
-
-    if (!canPetBody && !canPetHead) return;
-
-    state.lastPetAt = now;
-
-    let zoneName = canPetHead ? 'head' : 'body';
-    registerPetZone(zoneName);
-
-    const repetitionMultiplier = getZonePenaltyMultiplier(zoneName);
-
-    if (zoneName === 'head') {
-      state.score += 2;
-      state.angerLevel += (state.mode === STATE_ALERT ? 2.8 : 1.8) * repetitionMultiplier;
-    } else {
-      if (state.mode === STATE_CALM) {
-        state.score += 0.5;
-        state.angerLevel += 0.45 * repetitionMultiplier;
+    function registerPetZone(zoneName) {
+      if (state.lastPetZone === zoneName) {
+        state.sameZoneStreak += 1;
       } else {
-        state.score += 2;
-        state.angerLevel += 1.15 * repetitionMultiplier;
+        state.lastPetZone = zoneName;
+        state.sameZoneStreak = 1;
       }
     }
 
-    if (state.mode === STATE_CALM && state.angerLevel >= state.alertThreshold) {
-      setFloppaState(STATE_ALERT);
+    function getZonePenaltyMultiplier(zoneName) {
+      const extraHits = Math.max(0, state.sameZoneStreak - 1);
+      if (zoneName === 'head') return 1 + Math.min(1.1, extraHits * 0.16);
+      return 1 + Math.min(0.55, extraHits * 0.08);
     }
 
-    if (state.angerLevel >= config.dangerPetLimit) {
-      updateHUD();
-      gameOver();
-      return;
-    }
+    function updateHUD() {
+      els.score.textContent = state.score.toFixed(1);
+      els.finalScore.textContent = state.score.toFixed(1);
 
-    updateHUD();
-  }
-
-  function coolDownAnger() {
-    if (!state.alive) return;
-    if (state.mode === STATE_DEAD) return;
-
-    const decay = config.angerDecayPerFrame;
-
-    if (!state.isPointerDown) {
-      state.angerLevel = Math.max(0, state.angerLevel - decay);
-      resetPetPattern();
-    } else if (state.mode === STATE_ALERT && state.mouseSpeed < config.minSpeedToPet * 0.4) {
-      state.angerLevel = Math.max(0, state.angerLevel - decay * 0.45);
-    }
-
-    if (state.mode === STATE_ALERT && state.angerLevel < state.alertThreshold * 0.42) {
-      setFloppaState(STATE_CALM);
-    }
-  }
-
-  function gameLoop(now) {
-    coolDownAnger();
-    tryPet(now);
-    updateSoundscape();
-    updateHUD();
-    requestAnimationFrame(gameLoop);
-  }
-
-  function preloadInteraction() {
-    if (state.startedAudio) return;
-    state.startedAudio = true;
-
-    applySoundVolumes();
-
-    [
-      els.roarAudio,
-      els.rawwAudio,
-      els.pettingAudio,
-      els.purrAudio,
-      els.angryAudio
-    ].forEach((audio) => {
-      audio.load();
-    });
-  }
-
-  function initPointerEvents() {
-    window.addEventListener('mousemove', (e) => {
-      preloadInteraction();
-      moveHand(e.clientX, e.clientY);
-    });
-
-    window.addEventListener('touchmove', (e) => {
-      preloadInteraction();
-      const touch = e.touches[0];
-      if (!touch) return;
-      moveHand(touch.clientX, touch.clientY);
-    }, { passive: true });
-
-    window.addEventListener('mousedown', () => setPointerDown(true));
-    window.addEventListener('mouseup', () => setPointerDown(false));
-
-    window.addEventListener('touchstart', () => setPointerDown(true), { passive: true });
-    window.addEventListener('touchend', () => setPointerDown(false), { passive: true });
-    window.addEventListener('touchcancel', () => setPointerDown(false), { passive: true });
-  }
-
-  function initHelpModal() {
-    const pressed = new Set();
-
-    // DEV MODE : RAWWWWW
-    function tryToggleDevMode() {
-      if (pressed.has('KeyR') && pressed.has('KeyA') && pressed.has('KeyW')) {
-        config.debug = !config.debug;
-        inputs.toggleDebug.checked = config.debug;
-        syncDebugClass();
-        pressed.clear();
-      }
-    }
-
-    window.addEventListener('keydown', (e) => {
-      pressed.add(e.code);
-      tryToggleDevMode();
-    });
-
-    window.addEventListener('keyup', (e) => {
-      pressed.delete(e.code);
-    });
-
-    els.helpBtn.addEventListener('click', () => {
-      els.helpModal.classList.add('show');
-    });
-
-    els.closeHelpBtn.addEventListener('click', () => {
-      els.helpModal.classList.remove('show');
-    });
-
-    els.helpModal.addEventListener('click', (e) => {
-      if (e.target === els.helpModal) {
-        els.helpModal.classList.remove('show');
-      }
-    });
-  }
-
-  function applySoundVolumes() {
-    els.pettingAudio.volume = Math.min(1, soundVolume.master * soundVolume.alisa);
-    els.purrAudio.volume = Math.min(1, soundVolume.master * soundVolume.ronronar);
-    els.angryAudio.volume = Math.min(1, soundVolume.master * soundVolume.angry);
-    els.rawwAudio.volume = Math.min(1, soundVolume.master * soundVolume.raww);
-    els.roarAudio.volume = Math.min(1, soundVolume.master * soundVolume.die);
-  }
-
-  function stopAudio(audio, reset = true) {
-    if (!audio) return;
-    audio.pause();
-    if (reset) audio.currentTime = 0;
-  }
-
-  function pauseAudio(audio) {
-    if (!audio) return;
-    audio.pause();
-  }
-
-  function ensureLoop(audio) {
-    if (!audio) return;
-    audio.loop = true;
-    if (audio.paused) {
-      audio.play().catch(() => {});
-    }
-  }
-
-  function stopGameplayAudio() {
-    pauseAudio(els.pettingAudio);
-    pauseAudio(els.purrAudio);
-    pauseAudio(els.angryAudio);
-  }
-
-  function updateSoundscape() {
-    if (!state.alive || state.mode === STATE_DEAD) {
-      stopGameplayAudio();
-      return;
-    }
-
-    const handHit = getHandHitboxRect();
-    const bodyZone = percentRectToScreen(config.petZone);
-    const headZone = percentRectToScreen(config.dangerZone);
-
-    const inBody = intersects(handHit, bodyZone);
-    const inHead = intersects(handHit, headZone);
-    const touchingFloppa = inBody || inHead;
-
-    const movingEnough = state.mouseSpeed >= config.minSpeedToPet;
-
-    const isBodyPetting = state.isPointerDown && inBody && movingEnough;
-    const isHeadPetting = state.isPointerDown && inHead;
-    const isActuallyPetting = isBodyPetting || isHeadPetting;
-
-    if (isActuallyPetting && movingEnough) {
-      ensureLoop(els.pettingAudio);
-    } else {
-      pauseAudio(els.pettingAudio);
-    }
-
-    if (state.isPointerDown && touchingFloppa) {
       if (state.mode === STATE_CALM) {
-        ensureLoop(els.purrAudio);
-        pauseAudio(els.angryAudio);
+        els.stateText.textContent = `Calmo (${state.alertThreshold.toFixed(1)})`;
       } else if (state.mode === STATE_ALERT) {
-        ensureLoop(els.angryAudio);
-        pauseAudio(els.purrAudio);
+        els.stateText.textContent = 'Alerta';
+      } else {
+        els.stateText.textContent = 'Morto';
       }
-    } else {
+
+      const angerPercent = Math.round((state.angerLevel / config.dangerPetLimit) * 100);
+      els.angerText.textContent = `${clamp(angerPercent, 0, 999)}%`;
+      els.angryAudio.className = 'value' + (state.mode === STATE_ALERT ? ' danger-text' : '');
+    }
+
+    function setHandVisual() {
+      els.hand.style.width = `${config.handSize}px`;
+      els.hand.style.height = `${config.handSize}px`;
+      updateHandDebug();
+    }
+
+    function getWrapRect() {
+      return els.floppaWrap.getBoundingClientRect();
+    }
+
+    function percentRectToScreen(zone) {
+      const rect = getWrapRect();
+      return {
+        x: rect.left + (zone.x / 100) * rect.width,
+        y: rect.top + (zone.y / 100) * rect.height,
+        w: (zone.w / 100) * rect.width,
+        h: (zone.h / 100) * rect.height
+      };
+    }
+
+    function getHandRect() {
+      const size = config.handSize;
+      return {
+        x: state.mouseX - size / 2,
+        y: state.mouseY - size / 2,
+        w: size,
+        h: size
+      };
+    }
+
+    function getHandHitboxRect() {
+      const handRect = getHandRect();
+      return {
+        x: handRect.x + (config.handHitbox.x / 100) * handRect.w,
+        y: handRect.y + (config.handHitbox.y / 100) * handRect.h,
+        w: (config.handHitbox.w / 100) * handRect.w,
+        h: (config.handHitbox.h / 100) * handRect.h
+      };
+    }
+
+    function intersects(a, b) {
+      return (
+        a.x < b.x + b.w &&
+        a.x + a.w > b.x &&
+        a.y < b.y + b.h &&
+        a.y + a.h > b.y
+      );
+    }
+
+    function updateZoneDebug() {
+      const wrapRect = getWrapRect();
+      const pet = percentRectToScreen(config.petZone);
+      const danger = percentRectToScreen(config.dangerZone);
+
+      Object.assign(els.petZoneDebug.style, {
+        left: `${pet.x - wrapRect.left}px`,
+        top: `${pet.y - wrapRect.top}px`,
+        width: `${pet.w}px`,
+        height: `${pet.h}px`
+      });
+
+      Object.assign(els.dangerZoneDebug.style, {
+        left: `${danger.x - wrapRect.left}px`,
+        top: `${danger.y - wrapRect.top}px`,
+        width: `${danger.w}px`,
+        height: `${danger.h}px`
+      });
+    }
+
+    function updateHandDebug() {
+      const hit = getHandHitboxRect();
+      Object.assign(els.handDebug.style, {
+        left: `${hit.x + hit.w / 2}px`,
+        top: `${hit.y + hit.h / 2}px`,
+        width: `${hit.w}px`,
+        height: `${hit.h}px`
+      });
+    }
+
+    function syncDebugClass() {
+      els.body.classList.toggle('debug-on', config.debug);
+      els.body.classList.toggle('dev-on', config.debug);
+    }
+
+    function applyConfigToInputs() {
+      inputs.toggleDebug.checked = config.debug;
+      inputs.handScale.value = config.handSize;
+      inputs.petCooldown.value = config.petCooldownMs;
+      inputs.minSpeed.value = config.minSpeedToPet;
+      inputs.calmThreshold.value = config.calmThreshold;
+      inputs.dangerThreshold.value = config.dangerPetLimit;
+      inputs.angerDecay.value = config.angerDecayPerFrame;
+      inputs.petX.value = config.petZone.x;
+      inputs.petY.value = config.petZone.y;
+      inputs.petW.value = config.petZone.w;
+      inputs.petH.value = config.petZone.h;
+      inputs.dangerX.value = config.dangerZone.x;
+      inputs.dangerY.value = config.dangerZone.y;
+      inputs.dangerW.value = config.dangerZone.w;
+      inputs.dangerH.value = config.dangerZone.h;
+      inputs.handHitX.value = config.handHitbox.x;
+      inputs.handHitY.value = config.handHitbox.y;
+      inputs.handHitW.value = config.handHitbox.w;
+      inputs.handHitH.value = config.handHitbox.h;
+    }
+
+    function applyInputValuesToConfig() {
+      config.debug = !!inputs.toggleDebug.checked;
+      config.handSize = Number(inputs.handScale.value);
+      config.petCooldownMs = Number(inputs.petCooldown.value);
+      config.minSpeedToPet = Number(inputs.minSpeed.value);
+      config.calmThreshold = Number(inputs.calmThreshold.value);
+      config.dangerPetLimit = Number(inputs.dangerThreshold.value);
+      config.angerDecayPerFrame = Number(inputs.angerDecay.value);
+      config.petZone.x = Number(inputs.petX.value);
+      config.petZone.y = Number(inputs.petY.value);
+      config.petZone.w = Number(inputs.petW.value);
+      config.petZone.h = Number(inputs.petH.value);
+      config.dangerZone.x = Number(inputs.dangerX.value);
+      config.dangerZone.y = Number(inputs.dangerY.value);
+      config.dangerZone.w = Number(inputs.dangerW.value);
+      config.dangerZone.h = Number(inputs.dangerH.value);
+      config.handHitbox.x = Number(inputs.handHitX.value);
+      config.handHitbox.y = Number(inputs.handHitY.value);
+      config.handHitbox.w = Number(inputs.handHitW.value);
+      config.handHitbox.h = Number(inputs.handHitH.value);
+      rerollAlertThreshold();
+      syncDebugClass();
+      setHandVisual();
+      updateZoneDebug();
+      updateHUD();
+    }
+
+    function bindControls() {
+      Object.values(inputs).forEach((input) => {
+        input.addEventListener('input', applyInputValuesToConfig);
+        input.addEventListener('change', applyInputValuesToConfig);
+      });
+    }
+
+    function moveHand(x, y) {
+      state.prevMouseX = state.mouseX;
+      state.prevMouseY = state.mouseY;
+      state.mouseX = x;
+      state.mouseY = y;
+      const dx = state.mouseX - state.prevMouseX;
+      const dy = state.mouseY - state.prevMouseY;
+      state.mouseSpeed = Math.sqrt(dx * dx + dy * dy);
+      els.hand.style.left = `${x}px`;
+      els.hand.style.top = `${y}px`;
+      updateHandDebug();
+    }
+
+    function setPointerDown(value) {
+      state.isPointerDown = value;
+      els.hand.classList.toggle('pressing', value);
+      preloadInteraction();
+      if (!value) resetPetPattern();
+    }
+
+    function setFloppaState(mode) {
+      if (state.mode === mode) return;
+      state.mode = mode;
+
+      if (mode === STATE_CALM) {
+        els.floppa.src = 'images/state0.png';
+        rerollAlertThreshold();
+        resetPetPattern();
+      } else if (mode === STATE_ALERT) {
+        els.floppa.src = 'images/state1.png';
+        pulseDanger();
+        resetPetPattern();
+      }
+
+      updateHUD();
+    }
+
+    function pulseDanger() {
+      els.flash.classList.remove('dangerPulse');
+      void els.flash.offsetWidth;
+      els.flash.classList.add('dangerPulse');
+    }
+
+    function setSubmitStatus(message = '', kind = '') {
+      els.submitStatus.textContent = message;
+      els.submitStatus.className = `status-text${kind ? ' ' + kind : ''}`;
+    }
+
+    function setLeaderboardStatus(message = '', kind = '') {
+      els.leaderboardStatus.textContent = message;
+      els.leaderboardStatus.className = `status-text${kind ? ' ' + kind : ''}`;
+    }
+
+    function renderLeaderboard() {
+      els.leaderboardPlacement.textContent = state.playerBestPlacement ? `#${state.playerBestPlacement}` : '—';
+      els.leaderboardBest.textContent = state.playerBestScore != null ? state.playerBestScore.toFixed(1) : '—';
+
+      if (!state.leaderboardRows.length) {
+        els.leaderboardList.innerHTML = '<div class="rank-row"><span class="rank-num">—</span><span class="rank-name">Sem scores ainda</span><span class="rank-score">—</span></div>';
+        return;
+      }
+
+      const playerName = sanitizePlayerName(state.playerName).toLowerCase();
+
+      els.leaderboardList.innerHTML = state.leaderboardRows.map((row, index) => {
+        const rowName = String(row.player_name || '').toLowerCase();
+        const isPlayer = playerName && rowName === playerName && Number(row.score) === Number(state.playerBestScore);
+        return `
+          <div class="rank-row${isPlayer ? ' is-player' : ''}">
+            <span class="rank-num">#${index + 1}</span>
+            <span class="rank-name">${escapeHtml(row.player_name || 'Sem nome')}</span>
+            <span class="rank-score">${Number(row.score).toFixed(1)}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    async function refreshLeaderboard() {
+      if (!supabaseClient) {
+        setLeaderboardStatus('Configure o Supabase para ativar o ranking.', 'error');
+        renderLeaderboard();
+        return;
+      }
+
+      setLeaderboardStatus('Carregando ranking...');
+
+      const { data, error } = await supabaseClient
+        .from(LEADERBOARD_TABLE)
+        .select('player_name, score, created_at')
+        .order('score', { ascending: false })
+        .order('created_at', { ascending: true })
+        .limit(10);
+
+      if (error) {
+        setLeaderboardStatus('Não consegui carregar o ranking.', 'error');
+        renderLeaderboard();
+        return;
+      }
+
+      state.leaderboardRows = data || [];
+      setLeaderboardStatus(state.leaderboardRows.length ? 'Top 10 atualizado.' : 'Ainda não há scores enviados.', state.leaderboardRows.length ? 'ok' : '');
+      renderLeaderboard();
+    }
+
+    async function updatePlayerPlacement(name, scoreValue) {
+      if (!supabaseClient) return;
+
+      const { data, error } = await supabaseClient
+        .from(LEADERBOARD_TABLE)
+        .select('player_name, score')
+        .order('score', { ascending: false })
+        .order('created_at', { ascending: true });
+
+      if (error || !data) return;
+
+      const normalizedName = sanitizePlayerName(name).toLowerCase();
+      const index = data.findIndex((row) => String(row.player_name || '').toLowerCase() === normalizedName && Number(row.score) === Number(scoreValue));
+
+      state.playerBestScore = scoreValue;
+      state.playerBestPlacement = index >= 0 ? index + 1 : null;
+      renderLeaderboard();
+    }
+
+    async function submitScore() {
+      const cleanName = sanitizePlayerName(els.playerNameInput.value);
+      els.playerNameInput.value = cleanName;
+
+      if (!cleanName) {
+        setSubmitStatus('Digite um nome de até 15 caracteres.', 'error');
+        return;
+      }
+
+      if (!supabaseClient) {
+        setSubmitStatus('Falta configurar SUPABASE_URL e SUPABASE_ANON_KEY no código.', 'error');
+        return;
+      }
+
+      const currentScore = Number(state.score.toFixed(1));
+      setSubmitStatus('Enviando score...');
+      els.submitScoreBtn.disabled = true;
+
+      const payload = {
+        player_name: cleanName,
+        score: currentScore,
+        game_version: '1.0.0'
+      };
+
+      const { error } = await supabaseClient.from(LEADERBOARD_TABLE).insert(payload);
+
+      els.submitScoreBtn.disabled = false;
+
+      if (error) {
+        setSubmitStatus('Não consegui enviar o score. Verifique as policies e as chaves.', 'error');
+        return;
+      }
+
+      state.submittedThisRun = true;
+      state.playerName = cleanName;
+      localStorage.setItem('floppa_player_name', cleanName);
+      setSubmitStatus('Score enviado! Atualizando ranking...', 'ok');
+      await refreshLeaderboard();
+      await updatePlayerPlacement(cleanName, currentScore);
+      els.leaderboardModal.classList.add('show');
+    }
+
+    function gameOver() {
+      if (!state.alive || state.mode === STATE_DEAD) return;
+
+      state.alive = false;
+      state.mode = STATE_DEAD;
+      state.submittedThisRun = false;
+
+      els.floppa.src = 'images/state1.png';
+      els.jumpscare.classList.remove('show');
+      void els.jumpscare.offsetWidth;
+      els.jumpscare.classList.add('show');
+
+      els.playerNameInput.value = state.playerName;
+      setSubmitStatus('');
+      playDeathSounds();
+
+      setTimeout(() => {
+        els.gameOver.classList.add('show');
+      }, 450);
+
+      updateHUD();
+    }
+
+    function restartGame() {
+      stopGameplayAudio();
+      stopAudio(els.roarAudio);
+      stopAudio(els.rawwAudio);
+
+      state.score = 0;
+      state.alive = true;
+      state.lastPetAt = 0;
+      state.angerLevel = 0;
+      state.isPointerDown = false;
+      state.mouseSpeed = 0;
+      state.submittedThisRun = false;
+      resetPetPattern();
+
+      els.hand.classList.remove('pressing');
+      els.jumpscare.classList.remove('show');
+      els.gameOver.classList.remove('show');
+
+      rerollAlertThreshold();
+      setFloppaState(STATE_CALM);
+      updateHUD();
+    }
+
+    function tryPet(now) {
+      if (!state.alive) return;
+      if (!state.isPointerDown) return;
+      if (now - state.lastPetAt < config.petCooldownMs) return;
+
+      const handHit = getHandHitboxRect();
+      const bodyZone = percentRectToScreen(config.petZone);
+      const headZone = percentRectToScreen(config.dangerZone);
+      const inBody = intersects(handHit, bodyZone);
+      const inHead = intersects(handHit, headZone);
+
+      if (!inBody && !inHead) return;
+
+      const movedEnough = state.mouseSpeed >= config.minSpeedToPet;
+      const canPetBody = inBody && movedEnough;
+      const canPetHead = inHead;
+      if (!canPetBody && !canPetHead) return;
+
+      state.lastPetAt = now;
+      const zoneName = canPetHead ? 'head' : 'body';
+      registerPetZone(zoneName);
+      const repetitionMultiplier = getZonePenaltyMultiplier(zoneName);
+
+      if (zoneName === 'head') {
+        state.score += 2;
+        state.angerLevel += (state.mode === STATE_ALERT ? 2.8 : 1.8) * repetitionMultiplier;
+      } else {
+        if (state.mode === STATE_CALM) {
+          state.score += 0.5;
+          state.angerLevel += 0.45 * repetitionMultiplier;
+        } else {
+          state.score += 2;
+          state.angerLevel += 1.15 * repetitionMultiplier;
+        }
+      }
+
+      if (state.mode === STATE_CALM && state.angerLevel >= state.alertThreshold) {
+        setFloppaState(STATE_ALERT);
+      }
+
+      if (state.angerLevel >= config.dangerPetLimit) {
+        updateHUD();
+        gameOver();
+        return;
+      }
+
+      updateHUD();
+    }
+
+    function coolDownAnger() {
+      if (!state.alive) return;
+      if (state.mode === STATE_DEAD) return;
+
+      const decay = config.angerDecayPerFrame;
+
+      if (!state.isPointerDown) {
+        state.angerLevel = Math.max(0, state.angerLevel - decay);
+        resetPetPattern();
+      } else if (state.mode === STATE_ALERT && state.mouseSpeed < config.minSpeedToPet * 0.4) {
+        state.angerLevel = Math.max(0, state.angerLevel - decay * 0.45);
+      }
+
+      if (state.mode === STATE_ALERT && state.angerLevel < state.alertThreshold * 0.42) {
+        setFloppaState(STATE_CALM);
+      }
+    }
+
+    function gameLoop(now) {
+      coolDownAnger();
+      tryPet(now);
+      updateSoundscape();
+      updateHUD();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function preloadInteraction() {
+      if (state.startedAudio) return;
+      state.startedAudio = true;
+      applySoundVolumes();
+      [els.roarAudio, els.rawwAudio, els.pettingAudio, els.purrAudio, els.angryAudio].forEach((audio) => {
+        audio.load();
+      });
+    }
+
+    function initPointerEvents() {
+      window.addEventListener('mousemove', (e) => {
+        preloadInteraction();
+        moveHand(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('touchmove', (e) => {
+        preloadInteraction();
+        const touch = e.touches[0];
+        if (!touch) return;
+        moveHand(touch.clientX, touch.clientY);
+      }, { passive: true });
+
+      window.addEventListener('mousedown', () => setPointerDown(true));
+      window.addEventListener('mouseup', () => setPointerDown(false));
+      window.addEventListener('touchstart', () => setPointerDown(true), { passive: true });
+      window.addEventListener('touchend', () => setPointerDown(false), { passive: true });
+      window.addEventListener('touchcancel', () => setPointerDown(false), { passive: true });
+    }
+
+    function initHelpModal() {
+      const pressed = new Set();
+
+      function tryToggleDevMode() {
+        if (pressed.has('KeyR') && pressed.has('KeyA') && pressed.has('KeyW')) {
+          config.debug = !config.debug;
+          inputs.toggleDebug.checked = config.debug;
+          syncDebugClass();
+          pressed.clear();
+        }
+      }
+
+      window.addEventListener('keydown', (e) => {
+        pressed.add(e.code);
+        tryToggleDevMode();
+      });
+
+      window.addEventListener('keyup', (e) => {
+        pressed.delete(e.code);
+      });
+
+      els.helpBtn.addEventListener('click', () => {
+        els.helpModal.classList.add('show');
+      });
+
+      els.closeHelpBtn.addEventListener('click', () => {
+        els.helpModal.classList.remove('show');
+      });
+
+      els.helpModal.addEventListener('click', (e) => {
+        if (e.target === els.helpModal) els.helpModal.classList.remove('show');
+      });
+    }
+
+    function initLeaderboardUI() {
+      els.playerNameInput.value = state.playerName;
+
+      els.leaderboardBtn.addEventListener('click', async () => {
+        els.leaderboardModal.classList.add('show');
+        await refreshLeaderboard();
+      });
+
+      els.closeLeaderboardBtn.addEventListener('click', () => {
+        els.leaderboardModal.classList.remove('show');
+      });
+
+      els.leaderboardModal.addEventListener('click', (e) => {
+        if (e.target === els.leaderboardModal) {
+          els.leaderboardModal.classList.remove('show');
+        }
+      });
+
+      els.refreshLeaderboardBtn.addEventListener('click', refreshLeaderboard);
+      els.submitScoreBtn.addEventListener('click', submitScore);
+      els.skipSubmitBtn.addEventListener('click', () => {
+        els.leaderboardModal.classList.add('show');
+        refreshLeaderboard();
+      });
+
+      els.playerNameInput.addEventListener('input', () => {
+        const cleaned = sanitizePlayerName(els.playerNameInput.value);
+        if (els.playerNameInput.value !== cleaned) {
+          const pos = cleaned.length;
+          els.playerNameInput.value = cleaned;
+          els.playerNameInput.setSelectionRange(pos, pos);
+        }
+      });
+    }
+
+    function applySoundVolumes() {
+      els.pettingAudio.volume = Math.min(1, soundVolume.master * soundVolume.alisa);
+      els.purrAudio.volume = Math.min(1, soundVolume.master * soundVolume.ronronar);
+      els.angryAudio.volume = Math.min(1, soundVolume.master * soundVolume.angry);
+      els.rawwAudio.volume = Math.min(1, soundVolume.master * soundVolume.raww);
+      els.roarAudio.volume = Math.min(1, soundVolume.master * soundVolume.die);
+    }
+
+    function stopAudio(audio, reset = true) {
+      if (!audio) return;
+      audio.pause();
+      if (reset) audio.currentTime = 0;
+    }
+
+    function pauseAudio(audio) {
+      if (!audio) return;
+      audio.pause();
+    }
+
+    function ensureLoop(audio) {
+      if (!audio) return;
+      audio.loop = true;
+      if (audio.paused) audio.play().catch(() => {});
+    }
+
+    function stopGameplayAudio() {
+      pauseAudio(els.pettingAudio);
       pauseAudio(els.purrAudio);
       pauseAudio(els.angryAudio);
     }
-  }
 
-  function playDeathSounds() {
-    stopGameplayAudio();
-
-    stopAudio(els.rawwAudio);
-    stopAudio(els.roarAudio);
-
-    applySoundVolumes();
-
-    els.rawwAudio.loop = false;
-    els.roarAudio.loop = false;
-
-    els.rawwAudio.play().catch(() => {});
-
-    setTimeout(() => {
-      if (state.mode === STATE_DEAD) {
-        els.roarAudio.currentTime = 0;
-        els.roarAudio.play().catch(() => {});
+    function updateSoundscape() {
+      if (!state.alive || state.mode === STATE_DEAD) {
+        stopGameplayAudio();
+        return;
       }
-    }, 140);
-  }
 
-  function init() {
-    bindControls();
-    applyConfigToInputs();
-    rerollAlertThreshold();
-    applyInputValuesToConfig();
-    applySoundVolumes();
+      const handHit = getHandHitboxRect();
+      const bodyZone = percentRectToScreen(config.petZone);
+      const headZone = percentRectToScreen(config.dangerZone);
+      const inBody = intersects(handHit, bodyZone);
+      const inHead = intersects(handHit, headZone);
+      const touchingFloppa = inBody || inHead;
+      const movingEnough = state.mouseSpeed >= config.minSpeedToPet;
+      const isBodyPetting = state.isPointerDown && inBody && movingEnough;
+      const isHeadPetting = state.isPointerDown && inHead;
+      const isActuallyPetting = isBodyPetting || isHeadPetting;
 
-    initPointerEvents();
-    initHelpModal();
+      if (isActuallyPetting && movingEnough) {
+        ensureLoop(els.pettingAudio);
+      } else {
+        pauseAudio(els.pettingAudio);
+      }
 
-    els.restartBtn.addEventListener('click', restartGame);
+      if (state.isPointerDown && touchingFloppa) {
+        if (state.mode === STATE_CALM) {
+          ensureLoop(els.purrAudio);
+          pauseAudio(els.angryAudio);
+        } else if (state.mode === STATE_ALERT) {
+          ensureLoop(els.angryAudio);
+          pauseAudio(els.purrAudio);
+        }
+      } else {
+        pauseAudio(els.purrAudio);
+        pauseAudio(els.angryAudio);
+      }
+    }
 
-    window.addEventListener('resize', () => {
-      updateZoneDebug();
-      updateHandDebug();
-    });
+    function playDeathSounds() {
+      stopGameplayAudio();
+      stopAudio(els.rawwAudio);
+      stopAudio(els.roarAudio);
+      applySoundVolumes();
+      els.rawwAudio.loop = false;
+      els.roarAudio.loop = false;
+      els.rawwAudio.play().catch(() => {});
+      setTimeout(() => {
+        if (state.mode === STATE_DEAD) {
+          els.roarAudio.currentTime = 0;
+          els.roarAudio.play().catch(() => {});
+        }
+      }, 140);
+    }
 
-    moveHand(window.innerWidth / 2, window.innerHeight / 2);
-    restartGame();
-    els.helpModal.classList.add('show');
-    requestAnimationFrame(gameLoop);
-  }
+    async function init() {
+      bindControls();
+      applyConfigToInputs();
+      rerollAlertThreshold();
+      applyInputValuesToConfig();
+      applySoundVolumes();
+      initPointerEvents();
+      initHelpModal();
+      initLeaderboardUI();
 
-  init();
-  window.floppaConfig = config;
-</script>
+      els.restartBtn.addEventListener('click', restartGame);
+
+      window.addEventListener('resize', () => {
+        updateZoneDebug();
+        updateHandDebug();
+      });
+
+      moveHand(window.innerWidth / 2, window.innerHeight / 2);
+      restartGame();
+      els.helpModal.classList.add('show');
+      renderLeaderboard();
+      refreshLeaderboard();
+      requestAnimationFrame(gameLoop);
+    }
+
+    init();
+    window.floppaConfig = config;
+  </script>
 </body>
 </html>
